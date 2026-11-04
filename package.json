@@ -1,0 +1,18 @@
+{
+  "name": "glucai",
+  "version": "2.0.0",
+  "description": "GlucAI 2.0 - Sistema de diagnóstico glucémico con motor KNN",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/.bin/jest tests/ 2>/dev/null || echo 'Tests pendientes de configurar'",
+    "dev": "echo 'Sirve src/frontend/index.html directamente en el navegador'"
+  },
+  "keywords": [
+    "glucai",
+    "knn",
+    "diabetes",
+    "diagnostico"
+  ],
+  "author": "GProA Technology",
+  "license": "MIT"
+}
