@@ -1,18 +1,30 @@
 {
   "name": "glucai",
   "version": "2.0.0",
-  "description": "GlucAI 2.0 - Sistema de diagnóstico glucémico con motor KNN",
+  "description": "GlucAI 2.0 - Sistema de diagnóstico glucémico con motor KNN (Vite + Vitest)",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/.bin/jest tests/ 2>/dev/null || echo 'Tests pendientes de configurar'",
-    "dev": "echo 'Sirve src/frontend/index.html directamente en el navegador'"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint src tests --ext .js",
+    "format": "prettier --write src tests"
   },
   "keywords": [
     "glucai",
     "knn",
     "diabetes",
-    "diagnostico"
+    "diagnostico",
+    "vite"
   ],
   "author": "GProA Technology",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "vitest": "^2.0.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.0",
+    "eslint-config-prettier": "^9.1.0"
+  }
 }
