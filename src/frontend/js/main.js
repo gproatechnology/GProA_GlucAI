@@ -1,11 +1,26 @@
 /**
  * GlucAI 2.0 — main.js
- * Punto de entrada de la aplicación. Conecta UI con el motor KNN.
+ * Conecta UI con el motor KNN.
  */
 
 import { calcularRiesgoGlucosa } from './knn/indice.js';
+import { renderizarCampos, obtenerValores } from './ui/formulario.js';
+import { mostrarResultado, ocultarResultado } from './ui/resultado.js';
+import { renderizarHistorial } from './ui/historial.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('GlucAI 2.0 inicializado');
-  // La lógica de UI se conectará en el Sprint 3
+    console.log('GlucAI 2.0 inicializado');
+
+    // Inicializar formulario
+    renderizarCampos();
+
+    // Inicializar historial
+    renderizarHistorial();
+
+    // Escuchar solicitud de diagnóstico desde el formulario
+    window.addEventListener('diagnosticar-solicitado', (e) => {
+        const valores = e.detail;
+        const resultado = calcularRiesgoGlucosa(valores);
+        mostrarResultado(resultado, valores);
+    });
 });

@@ -3,11 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlucAI 2.0 — Demo</title>
+    <title>GlucAI 2.0 — Diagnóstico Glucémico</title>
     <link rel="stylesheet" href="./css/estilos.css">
 </head>
 <body>
-    <div id="app"></div>
+    <header class="header">
+        <div class="container">
+            <h1>GlucAI 2.0</h1>
+            <p class="subtitle">Diagnóstico glucémico con motor KNN — 33 biomarcadores</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="form-section" class="card">
+            <h2><i class="fas fa-flask"></i> Ingreso de Biomarcadores</h2>
+            <p class="hint">Completa los 33 valores de química sanguínea. Los campos obligatorios están marcados con asterisco (*).</p>
+
+            <form id="form-biomarcadores" novalidate>
+                <div class="form-grid" id="campos-biomarcadores"></div>
+
+                <div class="form-actions">
+                    <button type="button" id="btn-cargar-ejemplo" class="btn btn-secondary">Cargar ejemplo</button>
+                    <button type="submit" id="btn-diagnosticar" class="btn btn-primary">Ejecutar diagnóstico</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="resultado-section" class="card hidden">
+            <h2><i class="fas fa-user-md"></i> Resultado del Diagnóstico</h2>
+            <div class="resultado-grid">
+                <div class="resultado-clase">
+                    <div class="clase-badge" id="badge-clase">—</div>
+                    <div class="confianza">
+                        <span id="valor-confianza">0%</span>
+                        <div class="barra-confianza">
+                            <div class="relleno-confianza" id="relleno-confianza"></div>
+                        </div>
+                    </div>
+                    <p id="texto-notas">—</p>
+                </div>
+                <div class="resultado-explicacion">
+                    <h3>Factores más relevantes</h3>
+                    <ul id="lista-explicacion"></ul>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="btn-nuevo-diagnostico" class="btn btn-secondary">Nuevo diagnóstico</button>
+                <button type="button" id="btn-guardar-historial" class="btn btn-outline">Guardar en historial</button>
+                <button type="button" id="btn-exportar-json" class="btn btn-outline">Exportar JSON</button>
+            </div>
+        </section>
+
+        <section id="historial-section" class="card hidden">
+            <h2><i class="fas fa-history"></i> Historial</h2>
+            <div id="lista-historial" class="lista-historial vacia">
+                <p>No hay diagnósticos guardados.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 GProA Technology — GlucAI 2.0 Demo. Fines educativos, no uso clínico.</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast"></div>
+
     <script type="module" src="./js/main.js"></script>
 </body>
 </html>
