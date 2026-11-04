@@ -83,8 +83,8 @@ export async function compararPerfiles(perfilA = {}, perfilB = {}, topN = 5) {
   const valoresA = perfilA.valores || perfilA;
   const valoresB = perfilB.valores || perfilB;
 
-  const diagA = calcularRiesgoGlucosa(valoresA);
-  const diagB = calcularRiesgoGlucosa(valoresB);
+  const diagA = await calcularRiesgoGlucosa(valoresA);
+  const diagB = await calcularRiesgoGlucosa(valoresB);
 
   if (diagA.clasificacion === 'Error' || diagB.clasificacion === 'Error') {
     return {

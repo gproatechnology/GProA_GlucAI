@@ -15,6 +15,15 @@ import {
 import { BIOMARCADORES, CLASES } from '../src/js/data/biomarcadores.js';
 import { DATASET, STATS } from '../src/js/data/dataset.js';
 
+// Helper: crear objeto con todos los 33 biomarcadores en valores válidos
+function crearValoresValidos() {
+  const valores = {};
+  BIOMARCADORES.forEach(b => {
+    valores[b.id] = STATS[b.id].mean;
+  });
+  return valores;
+}
+
 describe('Estructura de datos', () => {
   it('BIOMARCADORES tiene 33 elementos', () => {
     expect(BIOMARCADORES).toHaveLength(33);
@@ -51,7 +60,7 @@ describe('Estructura de datos', () => {
 
 describe('Validación', () => {
   it('Entrada válida pasa la validación', () => {
-    const r = validarEntradas({ glucosa: 90, hba1c: 5.5 });
+    const r = validarEntradas(crearValoresValidos());
     expect(r.valido).toBe(true);
   });
 
@@ -105,8 +114,8 @@ describe('Distancia', () => {
   });
 
   it('Distancia con pesos funciona', () => {
-    const d1 = distanciaPonderada([1, 2], [4, 6], [1, 1]);
-    const d2 = distanciaPonderada([1, 2], [4, 6], [0, 1]);
+    const d1 = distanciaPonderada([10, 0], [0, 10], [1, 1]);
+    const d2 = distanciaPonderada([10, 0], [0, 10], [10, 1]);
     expect(d1).not.toBe(d2);
   });
 });
@@ -147,34 +156,34 @@ describe('Clasificación KNN', () => {
 });
 
 describe('Cálculo completo', () => {
-  it('calcularRiesgoGlucosa devuelve estructura válida', () => {
+  it('calcularRiesgoGlucosa devuelve estructura válida', async () => {
     const muestra = DATASET[0];
-    const r = calcularRiesgoGlucosa(muestra);
+    const r = await calcularRiesgoGlucosa(muestra);
     expect(['Normal', 'Prediabetes', 'Riesgo', 'Error']).toContain(r.clasificacion);
     expect(typeof r.confianza).toBe('number');
     expect(typeof r.notas).toBe('string');
     expect(Array.isArray(r.explicacion)).toBe(true);
   });
 
-  it('calcularRiesgoGlucosa con entrada inválida devuelve Error', () => {
-    const r = calcularRiesgoGlucosa({ glucosa: 'abc' });
+  it('calcularRiesgoGlucosa con entrada inválida devuelve Error', async () => {
+    const r = await calcularRiesgoGlucosa({ glucosa: 'abc' });
     expect(r.clasificacion).toBe('Error');
   });
 });
 
 describe('Comparador de perfiles', () => {
-  it('compararPerfiles devuelve estructura válida', () => {
+  it('compararPerfiles devuelve estructura válida', async () => {
     const a = DATASET[0];
     const b = DATASET[30];
-    const r = compararPerfiles({ valores: a }, { valores: b }, 3);
+    const r = await compararPerfiles({ valores: a }, { valores: b }, 3);
     expect(r.error).toBe(false);
     expect(r.a.clasificacion).toBeDefined();
     expect(r.b.clasificacion).toBeDefined();
     expect(Array.isArray(r.diferencias)).toBe(true);
   });
 
-  it('compararPerfiles con entrada inválida devuelve error', () => {
-    const r = compararPerfiles({ valores: { glucosa: 'abc' } }, { valores: DATASET[0] }, 3);
+  it('compararPerfiles con entrada inválida devuelve error', async () => {
+    const r = await compararPerfiles({ valores: { glucosa: 'abc' } }, { valores: DATASET[0] }, 3);
     expect(r.error).toBe(true);
   });
 });
