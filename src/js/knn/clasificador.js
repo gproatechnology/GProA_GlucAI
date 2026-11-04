@@ -1,6 +1,6 @@
 /**
  * GlucAI 2.0 — Clasificador KNN (k-vecinos más cercanos)
- * Clasificación con votación por mayoría y confianza proporcional.
+ * Clasificación con votación por mayoría, confianza proporcional y pesos personalizables.
  */
 
 import { BIOMARCADORES } from '../data/biomarcadores.js';
@@ -9,8 +9,25 @@ import { normalizar } from './normalizacion.js';
 import { distanciaPonderada } from './distancia.js';
 
 const DEFAULT_K = 5;
+const PESOS_POR_DEFECTO = {};
 
-export function clasificarKNN(dataset, entradaObj, k = DEFAULT_K, pesos) {
+BIOMARCADORES.forEach(b => {
+  PESOS_POR_DEFECTO[b.id] = b.peso;
+});
+
+/**
+ * Obtiene los pesos a usar: prefiere los del usuario, si no los por defecto del biomarcador
+ */
+function resolverPesos(preferencias) {
+  if (!preferencias || !preferencias.pesos) return PESOS_POR_DEFECTO;
+  const pesos = {};
+  BIOMARCADORES.forEach(b => {
+    pesos[b.id] = preferencias.pesos[b.id] ?? PESOS_POR_DEFECTO[b.id];
+  });
+  return pesos;
+}
+
+export function clasificarKNN(dataset, entradaObj, k = DEFAULT_K, pesos = PESOS_POR_DEFECTO) {
   if (!dataset || !entradaObj || !BIOMARCADORES.length) {
     return { clasificacion: 'Error', confianza: 0, vecinos: [] };
   }
@@ -50,8 +67,10 @@ const MAP_NOTAS = {
   Riesgo: 'Alteración significativa. Se recomienda evaluación clínica.'
 };
 
-export async function calcularRiesgoGlucosa(params = {}) {
+export async function calcularRiesgoGlucosa(params = {}, preferencias = null) {
   const { validarEntradas } = await import('./validacion.js');
+
+  const pesos = resolverPesos(preferencias);
 
   const validacion = validarEntradas(params);
   if (!validacion.valido) {
@@ -63,9 +82,9 @@ export async function calcularRiesgoGlucosa(params = {}) {
     };
   }
 
-  const resultado = clasificarKNN(DATASET, params, 5);
+  const resultado = clasificarKNN(DATASET, params, 5, pesos);
   const { explicarResultado } = await import('./explicabilidad.js');
-  const explicacion = explicarResultado(params, resultado, 5);
+  const explicacion = explicarResultado(params, resultado, pesos);
 
   return {
     clasificacion: resultado.clasificacion,
@@ -75,16 +94,17 @@ export async function calcularRiesgoGlucosa(params = {}) {
   };
 }
 
-export function orquestarDiagnostico(entradas) {
-  return calcularRiesgoGlucosa(entradas);
+export async function orquestarDiagnostico(entradas, preferencias = null) {
+  return calcularRiesgoGlucosa(entradas, preferencias);
 }
 
-export async function compararPerfiles(perfilA = {}, perfilB = {}, topN = 5) {
+export async function compararPerfiles(perfilA = {}, perfilB = {}, topN = 5, preferencias = null) {
   const valoresA = perfilA.valores || perfilA;
   const valoresB = perfilB.valores || perfilB;
+  const pesos = resolverPesos(preferencias);
 
-  const diagA = await calcularRiesgoGlucosa(valoresA);
-  const diagB = await calcularRiesgoGlucosa(valoresB);
+  const diagA = await calcularRiesgoGlucosa(valoresA, preferencias);
+  const diagB = await calcularRiesgoGlucosa(valoresB, preferencias);
 
   if (diagA.clasificacion === 'Error' || diagB.clasificacion === 'Error') {
     return {
@@ -96,11 +116,11 @@ export async function compararPerfiles(perfilA = {}, perfilB = {}, topN = 5) {
     };
   }
 
-  const knnA = clasificarKNN(DATASET, valoresA, 5);
-  const knnB = clasificarKNN(DATASET, valoresB, 5);
+  const knnA = clasificarKNN(DATASET, valoresA, 5, pesos);
+  const knnB = clasificarKNN(DATASET, valoresB, 5, pesos);
   const { explicarResultado } = await import('./explicabilidad.js');
-  const explicA = explicarResultado(valoresA, knnA, topN);
-  const explicB = explicarResultado(valoresB, knnB, topN);
+  const explicA = explicarResultado(valoresA, knnA, topN, pesos);
+  const explicB = explicarResultado(valoresB, knnB, topN, pesos);
 
   const diffs = explicA.map((itemA) => {
     const itemB = explicB.find((x) => x.id === itemA.id);

@@ -5,12 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlucAI 2.0 — Diagnóstico Glucémico</title>
     <link rel="stylesheet" href="./css/estilos.css">
+    <link rel="stylesheet" href="./css/configuracion.css">
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <h1>GlucAI 2.0</h1>
-            <p class="subtitle">Diagnóstico glucémico con motor KNN — 33 biomarcadores</p>
+            <div class="header-brand">
+                <h1>GlucAI 2.0</h1>
+                <p class="subtitle">Diagnóstico glucémico con motor KNN — 33 biomarcadores</p>
+            </div>
+            <button id="btn-configuracion" class="btn btn-outline" title="Configuración profesional">
+                <i class="fas fa-cog"></i>
+            </button>
         </div>
     </header>
 
@@ -70,6 +76,13 @@
     </footer>
 
     <div id="toast" class="toast"></div>
+
+    <!-- Modal de Configuración Profesional -->
+    <div id="panel-configuracion" class="config-modal" aria-hidden="true">
+        <div class="config-panel-modal" role="dialog" aria-modal="true">
+            <div id="contenido-configuracion"></div>
+        </div>
+    </div>
 
     <script type="module" src="./js/main.js"></script>
 </body>
