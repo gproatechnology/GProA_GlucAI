@@ -50,7 +50,7 @@ const MAP_NOTAS = {
   Riesgo: 'Alteración significativa. Se recomienda evaluación clínica.'
 };
 
-export function calcularRiesgoGlucosa(params = {}) {
+export async function calcularRiesgoGlucosa(params = {}) {
   const { validarEntradas } = await import('./validacion.js');
 
   const validacion = validarEntradas(params);
@@ -79,7 +79,7 @@ export function orquestarDiagnostico(entradas) {
   return calcularRiesgoGlucosa(entradas);
 }
 
-export function compararPerfiles(perfilA = {}, perfilB = {}, topN = 5) {
+export async function compararPerfiles(perfilA = {}, perfilB = {}, topN = 5) {
   const valoresA = perfilA.valores || perfilA;
   const valoresB = perfilB.valores || perfilB;
 

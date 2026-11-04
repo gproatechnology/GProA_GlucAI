@@ -58,7 +58,7 @@ if (btnNuevo) {
 }
 
 if (btnGuardar) {
-  btnGuardar.addEventListener('click', () => {
+    btnGuardar.addEventListener('click', async () => {
     if (!resultadoActual || !valoresActuales) return;
     const { guardarEnHistorial } = import('./historial.js');
     const entrada = {
